@@ -1,0 +1,124 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+
+// Color
+// ----------------------------------------
+/// Black & White
+$uni-color-white: #ffffff !default;
+$uni-color-black: #000000 !default;
+
+/* 行为相关颜色 */
+$uni-color-primary: #ff6833;
+$uni-color-success: #67d480;
+$uni-color-warning: #f5bf5e;
+$uni-color-error: #ee794f;
+$uni-color-info: #dddddd;
+
+// NeutralColor
+$uni-color-neutral-1: #303133 !default;
+$uni-color-neutral-2: #606266 !default;
+$uni-color-neutral-3: #909399 !default;
+$uni-color-neutral-4: #c0c4cc !default;
+$uni-color-neutral-5: #dcdfe6 !default;
+$uni-color-neutral-6: #e4e7ed !default;
+$uni-color-neutral-7: #ebeef5 !default;
+$uni-color-neutral-8: #f2f6fc !default;
+
+/* 文字基本颜色 */
+$uni-text-color: $uni-color-neutral-1; //基本色
+$uni-text-color-inverse: $uni-color-white; // 反色
+$uni-text-color-grey: $uni-color-neutral-2; //辅助灰色，如加载更多的提示信息
+$uni-text-color-placeholder: $uni-color-neutral-3;
+$uni-text-color-disable: $uni-color-neutral-4;
+
+/* 边框颜色 */
+$uni-border-color: #c8c7cc;
+
+/// Border
+$uni-border-color-base: $uni-color-neutral-5 !default;
+$uni-border-color-light: $uni-color-neutral-6 !default;
+$uni-border-color-lighter: $uni-color-neutral-7 !default;
+$uni-border-color-extra-light: $uni-color-neutral-8 !default;
+
+// 尺寸变量
+// ----------------------------------------
+/// 文字尺寸
+$uni-font-size-sm: 24rem;
+$uni-font-size-base: 28rem;
+$uni-font-size-lg: 32rem;
+
+/// 文字字体
+$uni-body-font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol !default;
+
+/* 图片尺寸 */
+$uni-img-size-sm: 40rem;
+$uni-img-size-base: 52rem;
+$uni-img-size-lg: 80rem;
+
+/* Border Radius */
+$uni-border-radius-sm: 4rem;
+$uni-border-radius-base: 6rem;
+$uni-border-radius-lg: 12rem;
+$uni-border-radius-circle: 50%;
+
+/* 水平间距 */
+$uni-spacing-row-sm: 10px;
+$uni-spacing-row-base: 20rem;
+$uni-spacing-row-lg: 30rem;
+
+/* 垂直间距 */
+$uni-spacing-col-sm: 8rem;
+$uni-spacing-col-base: 16rem;
+$uni-spacing-col-lg: 24rem;
+
+/* 透明度 */
+$uni-opacity-disabled: 0.3; // 组件禁用态的透明度
+
+/* 文章场景相关 */
+$uni-color-title: #2c405a; // 文章标题颜色
+$uni-font-size-title: 40rem;
+$uni-color-subtitle: #555555; // 二级标题颜色
+$uni-font-size-subtitle: 36rem;
+$uni-color-paragraph: #3f536e; // 文章段落颜色
+$uni-font-size-paragraph: 30rem;
+
+// Background
+// ----------------------------------------
+/* 背景颜色 */
+$uni-bg-color: $uni-color-white;
+$uni-bg-color-grey: $uni-color-neutral-7;
+$uni-bg-color-hover: $uni-color-neutral-5; // 点击状态颜色
+$uni-bg-color-mask: rgba(0, 0, 0, 0.4); // 遮罩颜色
+
+/// BackgroundColor
+$uni-background-color-base: #f8f8f8 !default;
+$uni-background-color-light: mix($uni-color-white, $uni-background-color-base, 58%);
+
+// Margin
+// ----------------------------------------
+$uni-margin-small: 20rem !default;
+$uni-margin-base: 40rem !default;
+$uni-margin-large: 80rem !default;
+
+// Padding
+// ----------------------------------------
+$uni-padding-small: 20rem !default;
+$uni-padding-base: 40rem !default;
+$uni-padding-large: 80rem !default;
+
+// z-index
+// ----------------------------------------
+$uni-index-normal: 1 !default;
+$uni-index-top: 1000 !default;
+$uni-index-popper: 2000 !default;

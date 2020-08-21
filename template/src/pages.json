@@ -1,0 +1,58 @@
+{
+  "pages": [
+    { "path": "pages/index/index" },
+    {
+      "path": "pages/order/order",
+      "style": {
+        "navigationBarTitleText": "订单"
+      }
+    },
+    { "path": "pages/my/my" },
+    { "path": "pages/personInfo/personInfo" },
+    { "path": "pages/barcodePay/barcodePay" },
+    { "path": "pages/client/index" },
+    { "path": "pages/wxPay/wxPay" },
+    {
+      "path": "pages/sharePage/index",
+      "style": {
+        "navigationBarTitleText": "分享",
+        "navigationStyle": "custom"
+      }
+    },
+    { "path": "pages/storepage/index" }
+  ],
+
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "小程序名称",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f2f2f2"
+  },
+
+  "tabBar": {
+    "color": "#454545",
+    "selectedColor": "#000000",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/static/nav_01.png",
+        "selectedIconPath": "/static/nav_01_active.png"
+      },
+      {
+        "pagePath": "pages/order/order",
+        "text": "订单",
+        "iconPath": "/static/nav_02.png",
+        "selectedIconPath": "/static/nav_02_active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "/static/nav_03.png",
+        "selectedIconPath": "/static/nav_03_active.png"
+      }
+    ]
+  }
+}

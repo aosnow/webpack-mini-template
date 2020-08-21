@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <meta charset="UTF-8">
+  <title>webview - postMessage</title>
+  <script>
+  var userAgent = window.navigator.userAgent;
+
+  // 根据环境不同加载支付宝/微信的小程序 JSSDK
+  if (/AlipayClient/i.test(userAgent)) {
+    document.write('<script src="https://appx/web-view.min.js"><\/script>');
+  }
+  else if (/MicroMessenger/i.test(userAgent)) {
+    document.write('<script src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"><\/script>');
+  }
+  </script>
+  <script src="https://js.cdn.aliyun.dcloud.net.cn/dev/uni-app/uni.webview.1.5.2.js"></script>
+</head>
+<body>
+  <div>此处为 h5 显示结果页面</div>
+  <button onclick="clickHandler()">返回首页</button>
+  <ul class="error-swap"></ul>
+  <script>
+  function clickHandler() {
+    uni.navigateTo({
+      url: '/pages/index/index',
+      success: function() {
+        printError('navigateTo success');
+      },
+      fail: function(error) {
+        printError('navigateTo fail', error.message);
+      }
+    });
+  }
+
+  function printError() {
+    var args = Array.prototype.slice.call(arguments, 0);
+    var el = document.querySelector('.error-swap');
+    el.innerHTML += '<li>' + args.join(' ') + '</li>';
+  }
+
+  document.addEventListener('UniAppJSBridgeReady', function() {
+    uni.postMessage({
+      data: {
+        type: 'ready'
+      }
+    });
+
+    uni.getEnv(function(res) {
+      console.log('当前环境：' + JSON.stringify(res));
+    });
+  });
+
+  window.addEventListener('error', function(error) {
+    printError(error.message);
+  }, true);
+  </script>
+</body>
+</html>
