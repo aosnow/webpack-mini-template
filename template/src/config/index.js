@@ -22,7 +22,7 @@ export default {
   // 根据不同的业务导向自定义（银盒子小程序根据菜单手动指定）
   // 其它业务级小程序固定（如会员小程序则固定为'member'），目前暂不开发业务级小程序，全部通过 sliverbox.mini 进行导向
   mini_type: 'sweep',
-  imgPath: 'https://img.blibao.com/',
+  imgPath: '', // 全局图片绝对地址
 
   shop_id: 1000000,
   store_id: '', //1000001
@@ -54,59 +54,45 @@ export default {
 
   // 环境链接
   test: {
-    h5url: 'http://test.blibao.com:10080/groupbuy/',
-    auth: 'http://test.blibao.com/Auth/',
-    pay: 'https://dev.blibao.com/SweepPay/',
-    openapi: 'http://test.api.blibao.com/ApiService/',
-    sweep: 'http://test.blibao.com:5001/',
-    member: 'http://test.blibao.com:10080/api/member-user/',
-    'sweep-api': 'http://test.api.blibao.com/sweep-api/',
+    h5url: '',
+    auth: '',
+    pay: '',
+    openapi: '',
+    sweep: '',
+    member: '',
+    'sweep-api': '',
 
     // 业务根级地址
     url: {
-      sweep: 'http://test.blibao.com:10080/smo/',
-      // sweep: 'http://172.16.5.2:8081/',
-      member: 'http://test.blibao.com:10080/member-h5-vue/',
-      groupbuy: 'http://test.blibao.com:10080/groupbuy/',
-      reserve: 'http://test.blibao.com:10080/reserve/',
-      queue: 'http://test.blibao.com:10080/queue/'
+      member: ''
     }
   },
   pre: {
-    h5url: 'https://pre-test-api.blibao.com/groupbuy/',
-    auth: 'https://pre-test-web.blibao.com/Auth/',   // https://pre-test-api.blibao.com/Auth
-    pay: 'https://dev.blibao.com/SweepPay/',
-    openapi: 'https://pre-test-api.blibao.com/ApiService/',
-    sweep: 'https://pre-test-web.blibao.com/smo-api/',
-    member: 'https://pre-test-web.blibao.com/api/member-user/',
-    'sweep-api': 'https://pre-test-api.blibao.com/sweep-api/',
+    h5url: '',
+    auth: '',   // https://pre-test-api.blibao.com/Auth
+    pay: '',
+    openapi: '',
+    sweep: '',
+    member: '',
+    'sweep-api': '',
 
     // 业务根级地址
     url: {
-      sweep: 'https://pre-test-web.blibao.com/smo/',
-      member: 'https://pre-test-web.blibao.com/member-h5-vue/',
-      groupbuy: 'https://pre-test-web.blibao.com/groupbuy/',
-      reserve: 'https://pre-test-web.blibao.com/reserve/',
-      queue: 'https://pre-test-web.blibao.com/queue/'
+      member: ''
     }
   },
   release: {
-    h5url: 'https://d2.blibao.com/groupbuy/',
-    auth: 'https://b2b.blibao.com/Auth/',
-    pay: 'https://epay.blibao.com/ApiService/',
-    openapi: 'https://openapi.blibao.com/ApiService/',
-    // sweep: 'https://d2.blibao.com/smo-api/',
-		sweep: 'https://d2.blibao.com/smo/',
-    member: 'https://d2.blibao.com/api/member-user/',
-    'sweep-api': 'https://smoapi.blibao.com/ApiService/',
+    h5url: '',
+    auth: '',
+    pay: '',
+    openapi: '',
+		sweep: '',
+    member: '',
+    'sweep-api': '',
 
     // 业务根级地址
     url: {
-      sweep: 'https://d2.blibao.com/',
-      member: 'https://h5.blibao.com/member-h5-vue/',
-      groupbuy: 'https://d2.blibao.com/groupbuy/',
-      reserve: 'https://d2.blibao.com/reserve/',
-      queue: 'https://d2.blibao.com/queue/'
+      member: ''
     }
   },
 
