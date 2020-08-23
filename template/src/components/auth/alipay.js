@@ -11,7 +11,6 @@ export default {
     return {
       needAuthDialog: false,
 			userId: ''
-
     };
   },
 

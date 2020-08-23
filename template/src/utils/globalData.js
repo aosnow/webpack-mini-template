@@ -104,7 +104,7 @@ function _autoObservableSet(key, value, globalData = null) {
  * 自动解析“a.b.c”的父子结构语法引用属性
  * @param key
  * @param globalData
- * @return {{parent:object, key:string, value:*}} 如“a.b.c”，返回 {parent:b, key:'c', value:'c的值'}
+ * @return {Object} 如“a.b.c”，返回 {parent:b, key:'c', value:'c的值'}
  * @private
  */
 function _autoObservableGet(key, globalData = null) {

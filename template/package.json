@@ -40,6 +40,9 @@
     "test:mp-baidu": "cross-env UNI_PLATFORM=mp-baidu jest -i",
     "test:mp-weixin": "cross-env UNI_PLATFORM=mp-weixin jest -i"
   },
+  "gitHooks": {
+    "commit-msg": "node scripts/verifyCommitMsg.js"
+  },
   "dependencies": {
     "@dcloudio/uni-app-plus": "^2.0.0-28820200820001",
     "@dcloudio/uni-h5": "^2.0.0-28820200820001",
