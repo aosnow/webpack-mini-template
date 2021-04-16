@@ -1,6 +1,6 @@
 <script>
 
-import { observableGlobalData, setGlobalData, analyzeLaunchOption } from '@/utils';
+import { observableGlobalData, setGlobalData, analyzeOption } from '@/utils';
 
 import Config from './config'; // 根据不同的 platform 加载不同的配置
 
@@ -8,8 +8,7 @@ import Config from './config'; // 根据不同的 platform 加载不同的配置
 // 因此与 getApp() 读写相关操作只能在下一级的页面中进行
 
 const globalData = observableGlobalData({
-  ...Config,
-  env: 'test'  // test | pre | release 目前主要影响所使用的 http 配置
+  ...Config
 });
 
 export default {
@@ -17,11 +16,16 @@ export default {
   globalData,
 
   onLaunch(option) {
-    // console.log('App Launch', option);
+    // 手机信息
+    uni.getSystemInfo({
+      success: (res) => {
+        globalData.systemInfo = res;
+      }
+    });
   },
 
   onShow(option) {
-    const query = analyzeLaunchOption(option);
+    const query = analyzeOption(option);
 
     globalData.guid = query.guid || '';
     globalData.scene = option.scene || '';
@@ -32,30 +36,55 @@ export default {
 
     // 若是通用码进入，携带 guid，通过接口拿取基本参数
     if (globalData.guid) {
-      // #ifdef MP-WEIXIN
       this.getQRCodeInfo(globalData.guid) //'384EE981DCEBD791D80602FE91DB363B'
           .then(({ data }) => {
+            console.log('携带 guid:', data);
             const { shopId, storeId, tableInfoId } = data;
-
             globalData.ready = true;
             setGlobalData({ shop_id: shopId, store_id: storeId, table_info_id: tableInfoId }, globalData);
             uni.$emit('ready', { shop_id: shopId, store_id: storeId });
           })
           .catch(reason => uni.showModal({ title: '错误', content: reason.message, showCancel: false }));
-      // #endif
     }
+
+    // 通过 app_id 拿取基本参数
+    else if (globalData.app_id) {
+      this.getShopId(globalData.app_id)
+          .then((data) => {
+            console.log('携带 app_id:', data);
+            // const { shop_id } = data.data;
+            globalData.ready = true;
+            let shopList = data.data;
+            shopList.forEach(element => {
+              if (element.type === 9) {
+                setGlobalData({ streetShop: element }, globalData);
+              }
+              else {
+                setGlobalData({ mallShop: element }, globalData);
+              }
+            });
+            // setGlobalData({ shop_id: shop_id }, globalData);
+            uni.$emit('ready', { shopList: shopList }); //接口更改，返回多组shopId
+          })
+          .catch(reason => uni.showModal({ title: '错误', content: reason.message, showCancel: false }));
+    }
+
+    // 支付宝通用码进来
+    else if (query.shop_id && query.store_id) {
+      globalData.ready = true;
+      // 更新shop_id和store_id
+      setGlobalData({ shop_id: query.shop_id, store_id: query.store_id, table_info_id: query.table_info_id }, globalData);
+      uni.$emit('ready', { shop_id: query.shop_id, store_id: query.store_id });
+    }
+
+    // 支付宝体验码进来或者微信体验码
     else {
-      if (query.shop_id && query.store_id) { // 支付宝通用码进来
-        globalData.ready = true;
-        // 更新shop_id和store_id
-        setGlobalData({ shop_id: query.shop_id, store_id: query.store_id, table_info_id: query.table_info_id }, globalData);
-        uni.$emit('ready', { shop_id: query.shop_id, store_id: query.store_id });
-      }
-      else {
-        globalData.ready = true; // 支付宝体验码进来或者微信体验码
-        setGlobalData({ shop_id: '1000000' }, globalData);
-        uni.$emit('ready', { shop_id: '1000000' });
-      }
+      globalData.ready = true;
+      // setGlobalData({ shop_id: '73862', store_id: '79982' }, globalData);
+      setGlobalData({ shop_id: '6546771', store_id: '6546797', table_info_id: '1890120' }, globalData);
+      uni.$emit('ready', { shop_id: '6546771', store_id: '6546797' });
+      // setGlobalData({ shop_id: "1000000" });
+      // uni.$emit('ready', { shop_id: "1000000" });
     }
   },
 
@@ -70,31 +99,39 @@ export default {
 
   methods: {
     getQRCodeInfo(guid) {
-      return new Promise((resolve, reject) => {
-        this.$http.get({
-          scope: 'openapi',
-          url: 'ajax/getShopQrInfo.htm',
-          data: { guid },
-          success: ({ data }) => {
-            console.log('App Show', data);
-            if (data.success) {
-              // 更新shop_id和store_id
-              setGlobalData({ shop_id: data.data.shopId, store_id: data.data.storeId });
-              if (data.data.tableInfoId) {
-                setGlobalData({ table_info_id: data.data.tableInfoId });
-              }
-              resolve(data);
-            }
-            else {
-              reject(new Error(data.msg));
-            }
-          },
-          fail: (reason) => {
-            console.log('App Show', reason);
-            reject(new Error(reason.errMsg));
-          }
-        });
-      });
+      return this.$http.openapi.get('ajax/getShopQrInfo.htm', { guid })
+                 .then(({ data }) => {
+                   if (data.success) {
+                     // 更新shop_id和store_id
+                     // setGlobalData({ shop_id: data.data.shopId, store_id: data.data.storeId });
+                     // if (data.data.tableInfoId) {
+                     //   setGlobalData({ table_info_id: data.data.tableInfoId });
+                     // }
+                     return Promise.resolve(data);
+                   }
+                   else {
+                     return Promise.reject(new Error(data.msg));
+                   }
+                 })
+                 .catch((reason) => {
+                   console.log('App Show', reason);
+                   return Promise.reject(reason);
+                 });
+    },
+
+    /**
+     * 通过app_id获取店铺账号
+     * @param app_id
+     * @return {Promise<unknown>}
+     */
+    getShopId(app_id) {
+      return this.$http.app.get('/app/config/getShopInfoByAppId', { appId: app_id })
+                 .then(({ data }) => {
+                   return Promise.resolve(data);
+                 })
+                 .catch((reason) => {
+                   return Promise.reject(reason);
+                 });
     }
   }
 };
@@ -113,8 +150,16 @@ page {
   -moz-osx-font-smoothing: grayscale;
 }
 
-*, *:before, *:after {
+%border-box {
   box-sizing: border-box;
   outline: none;
+}
+
+view, scroll-view, swiper, cover-view, cover-image, match-media, movable-area, text, rich-text, swiper-item, input, textarea {
+  @extend %border-box;
+
+  &:before, :after {
+    @extend %border-box;
+  }
 }
 </style>

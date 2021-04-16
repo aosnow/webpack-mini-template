@@ -6,8 +6,10 @@
 
 import Vue from 'vue';
 
+const toString = Object.prototype.toString;
+
 function isObject(obj) {
-  return obj.toString() === '[object Object]';
+  return toString.call(obj) === '[object Object]';
 }
 
 // 将数据对象转换成可响应对象

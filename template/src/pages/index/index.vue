@@ -2,19 +2,20 @@
   <view class="home-index">
     <auth-dialog :need-auth="needAuth" :app-id="app_id" @user-info="userInfoHandler"/>
 
-    <view class="home-index__copyright">
+    <view class="home-index__body">
       <text>银盒子支付宝、微信双端小程序模板</text>
-      <image src="~@/static/copyright.png"/>
+      <!--<image class="home-index__body-head" :src="userInfo.avatar"/>-->
+      <!--<view class="home-index__body-nickname">{{userInfo.nickName}}</view>-->
+      <!--<view class="home-index__body-info">{{userInfo}}</view>-->
+      <image class="home-index__body-copy" src="~@/static/copyright.png"/>
     </view>
   </view>
 </template>
 
 <script>
 import { mapGlobalData, setGlobalData } from '@/utils';
-import AuthDialog from '@/components/auth/AuthDialog';
 
 export default {
-  components: { AuthDialog },
 
   data() {
     return {
@@ -25,11 +26,11 @@ export default {
 
   computed: {
     // 提取 globalData 全局数据
-    ...mapGlobalData([
-      'app_id',
-      'table_info_id',
-      'userInfo'
-    ])
+    ...mapGlobalData({
+      app_id: 'app_id',
+      table_info_id: 'table_info_id',
+      userInfo: 'userInfo'
+    })
   },
 
   onLoad(option) {
@@ -51,7 +52,6 @@ export default {
 
     // 用户授权数据获取成功
     userInfoHandler(userInfo) {
-
       setGlobalData({ userInfo });
     }
 
@@ -60,12 +60,14 @@ export default {
 </script>
 
 <style lang="scss">
+@import "~@/css/var.scss";
+
 .home-index {
   height: 100vh;
   background-repeat: no-repeat;
   background-size: cover;
 
-  &__copyright {
+  &__body {
     font-size: 32rem;
     display: flex;
     flex-direction: column;
@@ -73,9 +75,23 @@ export default {
     justify-content: center;
     padding-top: 200rem;
 
-    image {
-      //width: 486rem;
-      //height: 64rem;
+    &-head {
+      width: 100rem;
+      height: 100rem;
+      margin: 20rem;
+    }
+
+    &-info {
+      color: $--color-text-secondary;
+      width: 90%;
+      overflow-y: auto;
+      word-break: break-all;
+      margin: 20rem;
+      padding: 10rem;
+      border: 1px dotted $--border-color-base;
+    }
+
+    &-copy {
       width: 300rem;
       height: 40rem;
       background-size: contain;

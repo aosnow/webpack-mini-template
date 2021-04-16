@@ -34,7 +34,7 @@ quickapp-vue|快应用
   - dev 和 build 模式的区别：
     1. dev 模式有 SourceMap 可以方便的进行断点调试；
     2. build 模式会将代码进行压缩，体积更小更适合发布为正式版应用；
-    3. 进行 环境判断 时，dev 模式 process.env.NODE_ENV 的值为 development，build 模式 process.env.NODE_ENV 的值为 production。
+    3. 进行环境判断时，dev 模式 process.env.NODE_ENV 的值为 development，build 模式 process.env.NODE_ENV 的值为 production。
 
 ### vue 与 uni-app 小程序的差异
 [vue 与 uni-app 小程序的差异详细介绍](https://uniapp.dcloud.io/use/)

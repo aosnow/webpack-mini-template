@@ -4,215 +4,104 @@
 // created: 2020/5/7 14:44
 // ------------------------------------------------------------------------------
 
-import * as Types from './event';
+import mixAuthCommon from './auth';
+import { ScopeType } from './types';
+
+/*
+  说明：
+    不论是通过按钮授权还是从银盒子后端拉取用户数据，都会派发相应的 sope 数据事件
+    当从按钮授权时，还同时会验证当前混合环境是否具备 authCompleted 回调函数，是则将数据应用到该回调方法
+    当授权或请求发生相关的问题或者失败时，会验证当前环境 authFailed 回调函数，并输出错误信息
+
+    uni.getUserInfo 拒绝授权：
+    微信从uni.getUserInfo的fail回调返回
+    支付宝从 button 的 @error 事件返回
+ */
 
 export default {
 
+  mixins: [mixAuthCommon],
+
   data() {
     return {
-      needAuthDialog: false
+      // 银盒子授权接口
+      authApi: 'thirdAuth/wxLogin.htm',
+
+      // 当前授权对应的 appId
+      authAppId: null,
+
+      // 当前进行的授权类型
+      curScope: null,
+
+      // 仅做本地授权界面显示状态（与小程序授权结果无关）
+      // 未授权时需要设置为 true 提供用户操作入口，通过 api 方式授权已经全被废弃不必考虑，全部采用 button 由用户主动操作授权
+      // open-type 有效值 https://uniapp.dcloud.io/component/button?id=button
+      scope: {
+        [ScopeType.USER_INFO]: false, // 是否打开自定义界面（包含 getUserInfo button），获取用户授权
+        [ScopeType.PHONE_NUMBER]: false // 是否打开自定义界面（包含 getPhoneNumber button），获取用户授权
+      }
     };
   },
 
-  created() {
-    console.warn('微信授权');
-    this.needAuthDialog = this.needAuth;
-    this.login();
-  },
-
   methods: {
-    // 授权登录（尝试使用银盒子用户数据跳过微信官方授权）
-    login() {
-      // let this_ = this;
-      uni.showLoading({ title: '登录中...', mask: true });
 
-      uni.login({
-        success: (res) => {
-          if (res.code) {
-            this._loginBySliverBox({ appId: this.appId, code: res.code })
-                .then(data => {
-
-                  const { unionId } = data.data;
-
-                  uni.hideLoading();
-
-                  // 从未授权过，启动弹框授权（用户主动）
-                  if (!unionId) {
-                    this.openAuthDialog();
-                  }
-
-                  // 已存在授权记录，直接使用，跳过官方授权
-                  else {
-                    this.applyFinalUserInfo(data.data);
-                  }
-                })
-                .catch(reason => {
-                  uni.showToast({ title: reason.message, icon: 'none', mask: true });
-                });
-          }
-          else {
-            this._loginFailed(res);
-          }
-        }
-      });
+    // 统一与支付宝相同的流程
+    initAuth() {
+      return Promise.resolve({ success: true });
     },
 
-    authLogin() {
-      this.checkAuthSetting().then(authed => {
-        // A.未授权，直接统一使用 button 授权拿 userinfo
-        if (!authed) {
-          this.openAuthDialog();
-        }
-
-        // B.已授权，直接通过 api.getUserInfo 获取用户信息
-        else {
-          this.getUserInfo();
-        }
-      });
-    },
-
-    /**
-     * 银盒子微信登录服务
-     * @param params
-     * @private
-     */
-    _loginBySliverBox(params) {
-      return new Promise((resolve, reject) => {
-        this.$http.get({
-          scope: 'auth',
-          url: 'thirdAuth/wxLogin.htm',
-          data: { ...params },
-          success: ({ data }) => {
-            console.log(data, 'datadatadata');
-            if (data.code === 10000) {
-              resolve(data);
-            }
-            else {
-              reject(new Error(data.msg));
-            }
-          },
-          fail: (err) => {
-            console.warn('_loginBySliverBox.fail:', err);
-            reject(new Error(err.errMsg));
-          }
-        });
-      });
-    },
-
-    // 检测用户是否已经授权
-    checkAuthSetting() {
-      return new Promise(resolve => {
-        uni.getSetting({
-          success(res) {
-            // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-            resolve(res.authSetting['scope.userInfo']);
-          },
-          fail() {
-            resolve(false);
-          }
-        });
-      });
-    },
-
-    /**
-     * 打开或关闭授权对话框
-     * @param flag
-     */
-    openAuthDialog(flag = true) {
-      this.needAuthDialog = flag;
-    },
-
-    /**
-     * 通过 api 获取用户信息
-     */
-    getUserInfo() {
-      uni.getUserInfo({
-        success: (authUserInfo) => {
-          this.applyUserInfo(authUserInfo);
-        }
-      });
-    },
-
-    /**
-     * 开始使用用户信息进行业务步骤前置处理（需要存储到后端服务器）
-     * @param authUserInfo
-     */
-    applyUserInfo(authUserInfo) {
-      const { encryptedData, iv } = authUserInfo;
-      console.warn('applyUserInfo:', authUserInfo);
-
-      uni.login({
-        success: (res) => {
-          if (res.code) {
-            this._loginBySliverBox({
-              appId: this.appId,
-              code: res.code,
-              encryptedUserData: { encryptedData, iv }
-            }).then(data => {
-              const { unionId } = data.data;
-
-              // 若无 unionId，代表未绑定“微信开放平台”，无法查询到 unionId
-              if (!unionId) {
-                uni.showToast({ title: '未绑定微信开放平台，请联系管理员处理', icon: 'none', mask: true });
-              }
-
-              // 授权登录成功
-              else {
-                this.applyFinalUserInfo(data.data);
-              }
-            }).catch(reason => {
-              uni.showToast({ title: reason.message, icon: 'none', mask: true });
-            });
-          }
-          else {
-            this._loginFailed(res);
-          }
-        }
-      });
-    },
-
-    /**
-     * 使用与银盒子服务器数据同步的用户数据正式开始进行业务开展
-     * @param userInfo
-     */
-    applyFinalUserInfo(userInfo) {
-      console.log(userInfo, 'userInfo===================');
-      uni.showToast({ title: '登录成功', icon: 'success', mask: true, duration: 1000 });
-      this.emitDataEvent(Types.USER_INFO, userInfo);
-    },
+    // 微信通过按钮获取手机号
 
     // --------------------------------------------------------------------------
     //
     // Event handlers
+    // 请提前预置好 this.authAppId
     //
     // --------------------------------------------------------------------------
 
-    refuseUserInfoHandler() {
-      this.openAuthDialog(false);
-      this._loginFailed();
+    // 同意授权获取用户信息
+    getUserInfoHandler(event) {
+      /*
+      event.detail 示例：
+      {
+        encryptedData: "USLpV5d4p8epOZTCQw245dmgIdOX7d7AyiJUP37z6btuaz/kiv7RALJYiUtEr/Dd8ImfjZ+rpxr7N3wk0tkPt9+jOq+UubEUKm4N0GtEzCb5Hx8OkxSz7qNAQZYoaUNNH2kFKnec5OVXwagghS6Dvn7ME/u7EJOLhADBG2m4U8/sSBvjxoSut8ssw4a14Iw/ARtij4Rtt4h9gP1Fvqr+DU0JLihCedYrfBZXyf2mbnNdfL2g7DKwqfvYzkYt/ckI0YIYMw/ARG1EMOfIuyjBLTpqrZs57XkLyYXnGoApf7HB2jFWyegjXvOb/2i6K/pBr97KuUEiYyCy4F44jYypb3JPM8HUYHYhl15VIHRTBJadY5Ak9dHESie1APNRlrWbm6KPrWxKAzRgwf7ioTHoNS1tNQuRVFHf9+0s8MyJbYFlyUYOVES7T3q9fdNS7N6Cs2jgdiDrAuBj2g98axj76JAUhlHXK9IvGbXswOgpFPMkdBYDRs6S1ahMhuHfvQtRrjUXD8v4JQJXIgKTSSHUY+Iq3Fl0ME5RRuTMSFzBom0="
+        errMsg: "getUserInfo:ok"
+        iv: "d1w80W0wuoqYOOjzUlx0tA=="
+        rawData: "{"nickName":"喵大斯","gender":1,"language":"zh_CN","city":"Hangzhou","province":"Zhejiang","country":"China","avatarUrl":"https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKs0IBdr1XpDccYTcd57KDD49vpdclTnI0Dcy2oibjHiaTpgP3icNjBS7UlibtfFala7icCiaN3UaoLCVPA/132"}"
+        signature: "3f46b690266f06c5fc9e0208bd8eca64abf1524d"
+        userInfo: {
+          avatarUrl: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKs0IBdr1XpDccYTcd57KDD49vpdclTnI0Dcy2oibjHiaTpgP3icNjBS7UlibtfFala7icCiaN3UaoLCVPA/132"
+          city: "Hangzhou"
+          country: "China"
+          gender: 1
+          language: "zh_CN"
+          nickName: "喵大斯"
+          province: "Zhejiang"
+        }
+       }
+       */
+
+      this.curScope = ScopeType.USER_INFO;
+      this.dataHandler({ scope: this.curScope, appId: this.authAppId, detail: event.detail });
     },
 
-    getUserInfoHandler(event) {
-      const { detail: { errMsg } } = event;
+    getPhoneNumberHandler(event) {
+      this.curScope = ScopeType.PHONE_NUMBER;
+      this.dataHandler({ scope: this.curScope, appId: this.authAppId, detail: event.detail });
+    },
 
-      this.openAuthDialog(false);
+    dataHandler({ scope, appId, detail }) {
+      const success = /ok/i.test(detail.errMsg);
 
-      if (/ok/i.test(errMsg)) {
-        // 授权成功
-        this.applyUserInfo(event.detail);
+      this.setScopeState(scope, false);
+
+      if (success) {
+        this._authCompleted({ scope, appId, detail });
       }
       else {
-        // 拒绝授权
-        this._loginFailed(event.detail);
-      }
-    },
-
-    // 暂不登录或者授权失败
-    _loginFailed(detail) {
-      // 用户主动拒绝授权不再提示
-      if (typeof this.showAuthFailed === 'function' && detail && !/auth deny/i.test(detail.errMsg)) {
-        this.showAuthFailed(detail.errMsg);
+        this._loginFailed(detail);
       }
     }
+
   }
 };

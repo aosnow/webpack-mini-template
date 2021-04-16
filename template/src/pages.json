@@ -24,7 +24,7 @@
         "selectedIconPath": "/static/nav_01_active.png"
       },
       {
-        "pagePath": "pages/index/index",
+        "pagePath": "pages/client/index",
         "text": "首页2",
         "iconPath": "/static/nav_02.png",
         "selectedIconPath": "/static/nav_02_active.png"

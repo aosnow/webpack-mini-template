@@ -5,7 +5,7 @@
 ---------------------------------------------------->
 
 <template>
-  <view class="auth-dialog" v-if="needAuthDialog">
+  <view class="auth-dialog" v-show="isShowAuth">
     <view class="auth-dialog__mask"/>
     <view class="auth-dialog__body">
       <view class="auth-dialog__body--title">需要您的授权</view>
@@ -28,13 +28,25 @@
         <!--#ifdef MP-WEIXIN-->
         <!--参考：https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/wx.getUserInfo.html-->
         <button class="btn-confirm" type="primary" open-type="getUserInfo" @getuserinfo="getUserInfoHandler">我知道了</button>
+        <!--<button class="btn-confirm" type="primary" open-type="getPhoneNumber"-->
+        <!--        @getphonenumber="getPhoneNumberHandler"-->
+        <!--        @click="clickPhoneHandler"-->
+        <!--        @error="errorHandler">微信手机号-->
+        <!--</button>-->
         <!--#endif-->
 
         <!--#ifdef MP-ALIPAY-->
         <!--参考：https://opendocs.alipay.com/mini/api/ch8chh-->
-        <button class="btn-confirm" type="primary" open-type="getAuthorize" scope='userInfo' @getAuthorize="getAuthorizeHandler" @error="authErrorHandler">
+        <button class="btn-confirm" type="primary" open-type="getAuthorize" scope='userInfo' @getAuthorize="getUserInfoHandler">
           我知道了
         </button>
+        <!--<button class="btn-confirm" type="primary"-->
+        <!--        open-type="getAuthorize"-->
+        <!--        scope='phoneNumber'-->
+        <!--        @getAuthorize="getPhoneNumberHandler"-->
+        <!--        @click="clickUserHandler"-->
+        <!--        @error="errorHandler">支付宝手机号-->
+        <!--</button>-->
         <!--#endif-->
       </view>
     </view>
@@ -42,17 +54,17 @@
 </template>
 
 <script>
+import { ScopeType } from './types';
 import AuthMixin from './index';
-import { mapGlobalData, setGlobalData } from '@/utils';
-
-// beforeUpdate、updated 只有H5支持，小程序不支持
-// 参考：https://uniapp.dcloud.io/collocation/frame/lifecycle?id=%E7%BB%84%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F
 
 // 微信支持 login+getUserInfo，且同样支持 button 授权触发
 // https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/wx.getUserInfo.html
+
 // 支付宝不支持直接 API 授权（需要button触发）后 getOpenUserInfo
 // https://opendocs.alipay.com/mini/api/ch8chh
+
 // 因此统一使用按钮方式进行授权
+// 任何页面，相应的 `授权按钮+AuthMixin` 即可以实现自定义授权
 
 export default {
   name: 'auth-dialog',
@@ -66,45 +78,47 @@ export default {
     sync: {
       type: Boolean,
       default: true
-    },
-
-    needAuth: {
-      type: Boolean,
-      default: false
     }
   },
 
+  created() {
+    this.authAppId = this.appId;
+    this.requestData();
+  },
+
   computed: {
-    // 提取 globalData 全局数据
-    ...mapGlobalData([
-      'appName',
-      'app_id',
-      'imgPath',
-      'channel',
-      'shop_id',
-      'store_id',
-      'table_info_id',
-      'mini_type',
-      'guid',
-      'scene',
-      'userInfo'
-    ])
+    // 是否显示授权界面
+    isShowAuth() {
+      return this.scope[ScopeType.USER_INFO];
+    }
   },
 
   methods: {
 
-    // 提示授权失败（可进一步引导尝试重新授权）
-    showAuthFailed(errMsg) {
+    requestData() {
+      this.getUserData({ scope: ScopeType.USER_INFO });
+    },
+
+    authFailed({ scope, detail }) {
+      // 授权失败或者被拒绝关闭 loading
+      uni.hideLoading();
+
       uni.showModal({
-        title: '授权登录失败',
-        content: `是否尝试重新登录（${errMsg || '未知'}）`,
-        success: this.login
+        title: '授权失败',
+        content: '获取用户信息失败，是否重试',
+        success: ({ confirm }) => {
+          if (confirm) this.requestData();
+        }
       });
     },
 
-    // 数据获取完成事件
-    emitDataEvent(type, data) {
-      this.$emit(type, data);
+    authCompleted({ scope, detail }) {
+      uni.hideLoading();
+      console.warn('authCompleted:', scope, detail);
+    },
+
+    clickUserHandler() {
+      uni.showLoading({ title: '获取用户信息', mask: true });
     }
   }
 };
@@ -147,6 +161,9 @@ export default {
 
     .auth-dialog__body--content {
       padding: 20rem 20rem 0 20rem;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
 
       .desc {
         color: $uni-text-color-grey;
@@ -176,6 +193,9 @@ export default {
 
       .btn-cancel, .btn-confirm {
         @extend %button;
+        background: none;
+        color: #000000;
+        text-align: center;
       }
     }
   }

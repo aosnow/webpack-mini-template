@@ -6,7 +6,7 @@
 
 import QS from 'query-string';
 
-export function analyzeLaunchOption(option) {
+export function analyzeOption(option = {}) {
   let query;
 
   // 正式环境
@@ -22,7 +22,7 @@ export function analyzeLaunchOption(option) {
   // 测试环境
   // object 类型 {a:1,b:2}
   else {
-    query = option.query || Object.create(null);
+    query = option.query || option || Object.create(null);
   }
 
   // 解码参数值
