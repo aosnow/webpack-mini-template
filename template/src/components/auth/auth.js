@@ -21,12 +21,12 @@ export default {
       return new Promise((resolve) => {
         switch (scope) {
           case ScopeType.USER_INFO: {
-            this.getUserInfo({ appId: this.authAppId })
+            this.getUserInfo({ appId: this.targetAppid })
                 .then(userInfo => resolve(userInfo));
             break;
           }
           case ScopeType.PHONE_NUMBER: {
-            this.getPhoneNumber({ appId: this.authAppId })
+            this.getPhoneNumber({ appId: this.targetAppid })
                 .then(phoneNumber => resolve(phoneNumber));
             break;
           }
@@ -273,7 +273,6 @@ export default {
     // --------------------------------------------------------------------------
     //
     // Event handlers
-    // 请提前预置好 this.authAppId
     //
     // --------------------------------------------------------------------------
 

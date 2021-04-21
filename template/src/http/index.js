@@ -1,11 +1,15 @@
 // ------------------------------------------------------------------------------
-// name: http
+// name: index
 // author: mudas( mschool.tech )
-// created: 2020/5/6 17:44
+// created: 2021/4/19 22:22
 // ------------------------------------------------------------------------------
 
 import { ServiceError } from '@/error';
 import { mergeURL } from '@/utils';
+import AppConfig from '@/config';
+import HttpOption from './http.conf';
+import ApiConfig from './api.conf';
+import transformResponse from './transformResponse';
 
 /**
  * http 请求
@@ -13,7 +17,9 @@ import { mergeURL } from '@/utils';
  */
 function httpRequest(option) {
   const { host, url } = option;
+
   option.url = mergeURL(host, url);
+  option.method = (option.method || 'get').toUpperCase();
 
   return new Promise((resolve, reject) => {
     uni.request({
@@ -24,8 +30,8 @@ function httpRequest(option) {
        * @param {RequestSuccessCallbackResult} result
        */
       success: (result) => {
-        const { data = {}, statusCode } = result;
-        data.code = data.code && parseInt(data.code, 10);
+        const { statusCode } = result;
+        const data = transformResponse(result.data);
 
         // 网络或者服务器异常
         if (!statusCode) {
@@ -75,33 +81,48 @@ function httpRequest(option) {
 }
 
 // HTTP 接口请求包装
-export default (config) => {
+export default () => {
 
-  const { env, http } = config;
-
+  const { env = 'test' } = AppConfig;
   const Http = Object.create(null);
-  const HttpOption = config[env] || config['test'];
+  const config = ApiConfig[env] || ApiConfig['test'];
 
-  Object.keys(HttpOption).forEach(api => {
-    if (api === 'url') return true;
+  Object.keys(config).forEach(api => {
+    /**
+     * 发送 http 请求
+     * @param {RequestOptions} options 单个请求配置如“{ method:'', url:'', params:{}, data:{} }”
+     * @returns {Promise}
+     */
+    const request = (options) => {
+      const RequestOptions = { method: 'get', ...HttpOption, ...options };
+      RequestOptions.host = config[api];
 
-    Http[api] = {
-      get(url, data = null, params = {}) {
-        // 跳过 token 验证
-        params.header = params.header || {};
-        if (!params.header.token) params.header.invoke_source = 9999;
-
-        return httpRequest({ host: HttpOption[api], method: 'GET', url, data, ...http, ...params });
-      },
-
-      post(url, data = null, params = {}) {
-        // 跳过 token 验证
-        params.header = params.header || {};
-        if (!params.header.token) params.header.invoke_source = 9999;
-
-        return httpRequest({ host: HttpOption[api], method: 'POST', url, data, ...http, ...params });
-      }
+      return httpRequest(RequestOptions);
     };
+
+    /**
+     * 通过 get 方式请求数据
+     * @param {string} url 请求地址
+     * @param {*} [data=null] 需要提交的参数数据（做为 url params 提交）
+     * @param {RequestOptions} [conf] 附加配置参数（可覆盖默认配置，如覆盖 responseType）
+     * @returns {Promise}
+     */
+    const get = (url, data = null, conf = {}) => {
+      return request({ url, data, method: 'get', ...conf });
+    };
+
+    /**
+     * 通过 post 方式提交参数并请求数据
+     * @param {string} url 请求地址
+     * @param {*} [data=null] 需要提交的参数数据
+     * @param {RequestOptions} [conf] 附加配置参数（可覆盖默认配置，如覆盖 responseType）
+     * @returns {Promise}
+     */
+    const post = (url, data = null, conf = {}) => {
+      return request({ url, data, method: 'post', ...conf });
+    };
+
+    Http[api] = { request, get, post };
   });
 
   return Http;

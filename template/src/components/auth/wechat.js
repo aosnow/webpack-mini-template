@@ -27,9 +27,6 @@ export default {
       // 银盒子授权接口
       authApi: 'thirdAuth/wxLogin.htm',
 
-      // 当前授权对应的 appId
-      authAppId: null,
-
       // 当前进行的授权类型
       curScope: null,
 
@@ -45,17 +42,9 @@ export default {
 
   methods: {
 
-    // 统一与支付宝相同的流程
-    initAuth() {
-      return Promise.resolve({ success: true });
-    },
-
-    // 微信通过按钮获取手机号
-
     // --------------------------------------------------------------------------
     //
     // Event handlers
-    // 请提前预置好 this.authAppId
     //
     // --------------------------------------------------------------------------
 
@@ -82,12 +71,12 @@ export default {
        */
 
       this.curScope = ScopeType.USER_INFO;
-      this.dataHandler({ scope: this.curScope, appId: this.authAppId, detail: event.detail });
+      this.dataHandler({ scope: this.curScope, appId: this.targetAppid, detail: event.detail });
     },
 
     getPhoneNumberHandler(event) {
       this.curScope = ScopeType.PHONE_NUMBER;
-      this.dataHandler({ scope: this.curScope, appId: this.authAppId, detail: event.detail });
+      this.dataHandler({ scope: this.curScope, appId: this.targetAppid, detail: event.detail });
     },
 
     dataHandler({ scope, appId, detail }) {

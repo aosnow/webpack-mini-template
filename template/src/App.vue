@@ -1,137 +1,87 @@
+<!--------------------------------------------------
+  name: App2.vue
+  author: mudas( mschool.tech )
+  created: 2021/4/19
+---------------------------------------------------->
+
 <script>
 
-import { observableGlobalData, setGlobalData, analyzeOption } from '@/utils';
-
-import Config from './config'; // 根据不同的 platform 加载不同的配置
-
-// globalData 实际是 App 的一个属性成员
-// 因此与 getApp() 读写相关操作只能在下一级的页面中进行
-
-const globalData = observableGlobalData({
-  ...Config
-});
+import * as Types from '@/store/types';
+import { formatOption } from '@/utils';
 
 export default {
-  // 全局数据
-  globalData,
+  globalData: {
+    ready: false
+  },
 
   onLaunch(option) {
-    // 手机信息
+    // 手机硬件及环境信息
     uni.getSystemInfo({
       success: (res) => {
-        globalData.systemInfo = res;
+        this.$setSystem(res);
       }
     });
   },
 
   onShow(option) {
-    const query = analyzeOption(option);
+    const query = formatOption(option);
 
-    globalData.guid = query.guid || '';
-    globalData.scene = option.scene || '';
-    globalData.ready = false; // 每次启动的状态还原
+    // 记录环境参数
+    this.setReady(false);
+    this.$setConf({ guid: query.guid, scene: query.scene });
+    this.$setParam(query);
 
-    // 小程序每次打开包括第一次启动，都会触发该回调
-    setGlobalData({ query }, globalData);
-
-    // 若是通用码进入，携带 guid，通过接口拿取基本参数
-    if (globalData.guid) {
-      this.getQRCodeInfo(globalData.guid) //'384EE981DCEBD791D80602FE91DB363B'
+    // 1、若是通用码进入，携带 guid，通过接口拿取基本参数
+    if (query.guid) {
+      // 测试GUID：'384EE981DCEBD791D80602FE91DB363B'
+      this.$store.dispatch(Types.LAUNCH_QR, { guid: query.guid })
           .then(({ data }) => {
-            console.log('携带 guid:', data);
             const { shopId, storeId, tableInfoId } = data;
-            globalData.ready = true;
-            setGlobalData({ shop_id: shopId, store_id: storeId, table_info_id: tableInfoId }, globalData);
-            uni.$emit('ready', { shop_id: shopId, store_id: storeId });
+            this.isReady({ shopId, storeId, tableInfoId });
           })
-          .catch(reason => uni.showModal({ title: '错误', content: reason.message, showCancel: false }));
+          .catch(reason => this.failed(reason));
     }
 
-    // 通过 app_id 拿取基本参数
-    else if (globalData.app_id) {
-      this.getShopId(globalData.app_id)
-          .then((data) => {
-            console.log('携带 app_id:', data);
-            // const { shop_id } = data.data;
-            globalData.ready = true;
-            let shopList = data.data;
-            shopList.forEach(element => {
-              if (element.type === 9) {
-                setGlobalData({ streetShop: element }, globalData);
-              }
-              else {
-                setGlobalData({ mallShop: element }, globalData);
-              }
-            });
-            // setGlobalData({ shop_id: shop_id }, globalData);
-            uni.$emit('ready', { shopList: shopList }); //接口更改，返回多组shopId
-          })
-          .catch(reason => uni.showModal({ title: '错误', content: reason.message, showCancel: false }));
-    }
-
-    // 支付宝通用码进来
+    // 2、在线点餐、门店码、桌台码（包含 table_info_id）
     else if (query.shop_id && query.store_id) {
-      globalData.ready = true;
-      // 更新shop_id和store_id
-      setGlobalData({ shop_id: query.shop_id, store_id: query.store_id, table_info_id: query.table_info_id }, globalData);
-      uni.$emit('ready', { shop_id: query.shop_id, store_id: query.store_id });
+      this.isReady({ shopId: query.shop_id, storeId: query.store_id, tableInfoId: query.table_info_id });
     }
 
-    // 支付宝体验码进来或者微信体验码
+      // 3、默认启动
+      // 通过配置中的 appId 拿取基本参数
+
+    // 支付宝体验码进来或者微信体验码，以及搜索小程序进入的场景
     else {
-      globalData.ready = true;
-      // setGlobalData({ shop_id: '73862', store_id: '79982' }, globalData);
-      setGlobalData({ shop_id: '6546771', store_id: '6546797', table_info_id: '1890120' }, globalData);
-      uni.$emit('ready', { shop_id: '6546771', store_id: '6546797' });
-      // setGlobalData({ shop_id: "1000000" });
-      // uni.$emit('ready', { shop_id: "1000000" });
+      this.$store.dispatch(Types.LAUNCH_SHOP, { appId: this.appId })
+          .then((data) => {
+            const { shopId } = data.data;
+            this.isReady({ shopId });
+          })
+          .catch(reason => this.failed(reason));
     }
+
+    // 4、本地测试
+    // this.isReady({ shopId: '73862', storeId: '79982' });
+    // this.isReady({ shopId: '6546771', storeId: '6546797', tableInfoId: '1890120' });
+    // this.isReady({ shopId: '1000000' });
   },
 
   onHide() {
-    console.log('App Hide');
     // 关闭小程序的时候清空guid重新加载，避免用户小程序栏打开小程序重新进入此前二维码扫码结果页面
-    globalData.guid = '';
-    globalData.shop_id = '';
-    globalData.store_id = '';
-    globalData.table_info_id = '';
+    this.$store.commit(Types.ENV_RESET);
   },
 
   methods: {
-    getQRCodeInfo(guid) {
-      return this.$http.openapi.get('ajax/getShopQrInfo.htm', { guid })
-                 .then(({ data }) => {
-                   if (data.success) {
-                     // 更新shop_id和store_id
-                     // setGlobalData({ shop_id: data.data.shopId, store_id: data.data.storeId });
-                     // if (data.data.tableInfoId) {
-                     //   setGlobalData({ table_info_id: data.data.tableInfoId });
-                     // }
-                     return Promise.resolve(data);
-                   }
-                   else {
-                     return Promise.reject(new Error(data.msg));
-                   }
-                 })
-                 .catch((reason) => {
-                   console.log('App Show', reason);
-                   return Promise.reject(reason);
-                 });
+
+    // 应用启动结束
+    isReady(value) {
+      this.setReady(true);
+      this.$setConf(value);
+      uni.$emit('ready', value);
     },
 
-    /**
-     * 通过app_id获取店铺账号
-     * @param app_id
-     * @return {Promise<unknown>}
-     */
-    getShopId(app_id) {
-      return this.$http.app.get('/app/config/getShopInfoByAppId', { appId: app_id })
-                 .then(({ data }) => {
-                   return Promise.resolve(data);
-                 })
-                 .catch((reason) => {
-                   return Promise.reject(reason);
-                 });
+    failed(reason) {
+      uni.showModal({ title: '启动失败', content: reason.message, showCancel: false });
     }
   }
 };
@@ -142,8 +92,8 @@ page {
   color: $uni-text-color;
   font-family: $uni-body-font-family;
   font-size: $uni-font-size-base;
-  background-color: $uni-background-color-base;
   line-height: 1;
+  background-color: $uni-background-color-base;
 
   // 字体渲染抗锯齿，只对 MacOS 的 webkit、moz 有效，Windows 系统无区别
   -webkit-font-smoothing: antialiased;

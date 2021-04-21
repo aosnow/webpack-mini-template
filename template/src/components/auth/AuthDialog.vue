@@ -5,7 +5,7 @@
 ---------------------------------------------------->
 
 <template>
-  <view class="auth-dialog" v-show="isShowAuth">
+  <view v-show="isShowAuth" class="auth-dialog">
     <view class="auth-dialog__mask"/>
     <view class="auth-dialog__body">
       <view class="auth-dialog__body--title">需要您的授权</view>
@@ -13,12 +13,12 @@
       <view class="auth-dialog__body--content">
         <!--#ifdef MP-WEIXIN-->
         <view class='desc'>为了提供更好的服务<br>请在稍后的提示框中点击“允许”</view>
-        <image class="image" src="~@/static/auth-wechat.png" mode="aspectFit"/>
+        <image class="image" mode="aspectFit" src="~@/static/auth-wechat.png"/>
         <!--#endif-->
 
         <!--#ifdef MP-ALIPAY-->
         <view class='desc'>为了提供更好的服务<br>请在稍后的提示框中点击“同意”</view>
-        <image class="image" src="~@/static/auth-alipay.png" mode="aspectFit"/>
+        <image class="image" mode="aspectFit" src="~@/static/auth-alipay.png"/>
         <!--#endif-->
       </view>
 
@@ -27,7 +27,7 @@
 
         <!--#ifdef MP-WEIXIN-->
         <!--参考：https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/wx.getUserInfo.html-->
-        <button class="btn-confirm" type="primary" open-type="getUserInfo" @getuserinfo="getUserInfoHandler">我知道了</button>
+        <button class="btn-confirm" open-type="getUserInfo" type="primary" @getuserinfo="getUserInfoHandler">我知道了</button>
         <!--<button class="btn-confirm" type="primary" open-type="getPhoneNumber"-->
         <!--        @getphonenumber="getPhoneNumberHandler"-->
         <!--        @click="clickPhoneHandler"-->
@@ -37,7 +37,7 @@
 
         <!--#ifdef MP-ALIPAY-->
         <!--参考：https://opendocs.alipay.com/mini/api/ch8chh-->
-        <button class="btn-confirm" type="primary" open-type="getAuthorize" scope='userInfo' @getAuthorize="getUserInfoHandler">
+        <button class="btn-confirm" open-type="getAuthorize" scope='userInfo' type="primary" @getAuthorize="getUserInfoHandler">
           我知道了
         </button>
         <!--<button class="btn-confirm" type="primary"-->
@@ -54,8 +54,8 @@
 </template>
 
 <script>
-import { ScopeType } from './types';
 import AuthMixin from './index';
+import { ScopeType } from './types';
 
 // 微信支持 login+getUserInfo，且同样支持 button 授权触发
 // https://developers.weixin.qq.com/miniprogram/dev/api/open-api/user-info/wx.getUserInfo.html
@@ -71,19 +71,12 @@ export default {
   mixins: [AuthMixin],
 
   props: {
-    // 小程序 appid
-    appId: String,
-
-    // 是否将数据同步至银盒子服务器
-    sync: {
-      type: Boolean,
-      default: true
-    }
+    // 需要授权操作的目标 appid
+    targetAppid: String
   },
 
   created() {
-    this.authAppId = this.appId;
-    this.requestData();
+    if (this.targetAppid) this.requestData();
   },
 
   computed: {
@@ -114,7 +107,6 @@ export default {
 
     authCompleted({ scope, detail }) {
       uni.hideLoading();
-      console.warn('authCompleted:', scope, detail);
     },
 
     clickUserHandler() {
@@ -130,40 +122,40 @@ export default {
 
   .auth-dialog__mask {
     position: fixed;
+    z-index: $uni-index-popper;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
     background: $uni-bg-color-mask;
-    z-index: $uni-index-popper;
   }
 
   .auth-dialog__body {
     position: absolute;
+    z-index: $uni-index-popper + 1;
     top: 50%;
     left: 50%;
-    width: 85vw;
     /*height: 80vh;*/
-    background: rgba(255, 255, 255, 1);
+    width: 85vw;
     transform: translate(-50%, -50%);
     border-radius: 10rem;
-    z-index: $uni-index-popper + 1;
+    background: rgba(255, 255, 255, 1);
 
     .auth-dialog__body--title {
       color: $uni-text-color;
-      height: 120rem;
       font-size: 36rem;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      height: 120rem;
       border-bottom: 1px solid #dddddd;
     }
 
     .auth-dialog__body--content {
-      padding: 20rem 20rem 0 20rem;
       display: flex;
       align-items: center;
       flex-direction: column;
+      padding: 20rem 20rem 0 20rem;
 
       .desc {
         color: $uni-text-color-grey;
@@ -179,9 +171,9 @@ export default {
     }
 
     .auth-dialog__body--foot {
-      padding: 30rem 30rem 60rem 30rem;
       display: flex;
       justify-content: space-around;
+      padding: 30rem 30rem 60rem 30rem;
 
       %button {
         flex: 0 0 45%;
@@ -193,9 +185,9 @@ export default {
 
       .btn-cancel, .btn-confirm {
         @extend %button;
-        background: none;
         color: #000000;
         text-align: center;
+        background: none;
       }
     }
   }

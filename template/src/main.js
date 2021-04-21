@@ -6,6 +6,11 @@ import Vue from 'vue';
 import './init';
 
 // ----------------------------------------
+// 本地数据
+// ----------------------------------------
+import store from '@/store';
+
+// ----------------------------------------
 // 入口组件
 // ----------------------------------------
 import App from '@/App';
@@ -26,5 +31,6 @@ Vue.config.productionTip = false;
 App.mpType = 'app';
 
 const app = new Vue({
+  store,
   ...App
 }).$mount();

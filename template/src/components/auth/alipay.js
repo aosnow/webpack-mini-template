@@ -20,9 +20,6 @@ export default {
       // 银盒子授权接口
       authApi: 'thirdAuth/alipayLogin.htm',
 
-      // 当前授权对应的 appId
-      authAppId: null,
-
       // 当前进行的授权类型
       curScope: null,
 
@@ -38,47 +35,9 @@ export default {
 
   methods: {
 
-    initAuth() {
-      const params = { appId: this.authAppId };
-
-      return new Promise((resolve) => {
-        this.getAuthCode()
-            .then(code => {
-              if (!code) {
-                resolve({ success: false, reason: 'Failed to get code' });
-                return false;
-              }
-
-              params.code = code;
-
-              this._loginBySliverBox(params)
-                  .then(({ data, code, success }) => {
-                    const { userId } = data;
-
-                    if (success || code === 10000) {
-                      this.userId = userId;
-                      resolve({ success: true, data });
-                    }
-                    else {
-                      resolve({ success: false, reason: '初始化 userId 失败' });
-                    }
-
-                  })
-                  .catch(reason => {
-                    uni.showToast({ title: reason.message, icon: 'none', mask: true });
-                    this._loginFailed(reason);
-                  });
-            })
-            .catch(reason => this._loginFailed(reason));
-      });
-    },
-
-    // 支付宝直接通过 my.getPhoneNumber 获取
-
     // --------------------------------------------------------------------------
     //
     // Event handlers
-    // 请提前预置好 this.authAppId
     //
     // --------------------------------------------------------------------------
 
@@ -92,7 +51,7 @@ export default {
 
           if (parseInt(detail.code, 10) === 10000) {
             // 授权成功
-            this.dataHandler({ scope: this.curScope, appId: this.authAppId, detail: res });
+            this.dataHandler({ scope: this.curScope, appId: this.targetAppid, detail: res });
           }
           else {
             // 拒绝授权
@@ -111,7 +70,7 @@ export default {
       my.getPhoneNumber({
         success: (res) => {
           const encryptedData = res.response;
-          this.dataHandler({ scope: this.curScope, appId: this.authAppId, detail: { encryptedData } });
+          this.dataHandler({ scope: this.curScope, appId: this.targetAppid, detail: { encryptedData } });
         },
         fail: (reason) => {
           this._loginFailed(reason);

@@ -1,10 +1,12 @@
 // ------------------------------------------------------------------------------
 // name: index
 // author: mudas( mschool.tech )
-// created: 2020.05.05 上午 6:17
+// created: 2020/3/19 13:53
 // ------------------------------------------------------------------------------
 
-export * from '@mudas/util';
+import { merge } from '@mudas/store';
+import UserInfo from './userinfo';
 
-export * from './launch';
-export * from './navigator';
+export default merge([
+  UserInfo
+]);

@@ -12,27 +12,26 @@
 </template>
 
 <script>
-import { parseQuery, analyzeOption } from '@/utils';
-import mixAuth from '@/mixins/auth';
+import mixQuery from '@/mixins/query';
+import { formatOption } from '@/utils';
 
 export default {
-  mixins: [mixAuth],
+  mixins: [mixQuery],
 
   data() {
     return {
-      url: '',
-      option: null
+      url: ''
     };
   },
 
   onLoad(option) {
-    this.option = analyzeOption(option);
+    this.pageReady(formatOption(option));
   },
 
   methods: {
-    pageReady(source) {
-      console.warn('page ready...', source);
-      this.url = `http://172.16.17.5:8080/#?${parseQuery({ ...this.option, mini_type: 'sweep' })}`;
+    pageReady(option) {
+      console.warn('page ready...');
+      this.url = `http://172.16.17.5:8080/#?${this.genQueryData({ ...option, miniType: 'sweep' })}`;
     }
   }
 };

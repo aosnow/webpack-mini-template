@@ -6,8 +6,8 @@
 
 // 微信小程序配置
 export default {
-  source: 'WX',
+  source: 2,
   channel: 'wechat',
-  app_id: 'wx25af39b75249f5c9'
+  appId: 'wx25af39b75249f5c9'
 };
 

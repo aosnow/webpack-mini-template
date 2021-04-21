@@ -18,7 +18,6 @@ export const ScopeType = {
 };
 // #endif
 
-
 export const EventType = {
   [ScopeType.USER_INFO]: 'user-info',
   [ScopeType.PHONE_NUMBER]: 'phone'

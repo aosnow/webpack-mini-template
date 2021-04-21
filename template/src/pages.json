@@ -1,7 +1,9 @@
 {
   "pages": [
     { "path": "pages/index/index" },
-    { "path": "pages/client/index" }
+    { "path": "pages/client/index" },
+    { "path": "pages/map/index" },
+    { "path": "pages/wxPay/wxPay" }
   ],
 
   "globalStyle": {

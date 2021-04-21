@@ -6,7 +6,7 @@
 
 // 支付宝小程序配置
 export default {
-  source: 'ALIPAY',
+  source: 1,
   channel: 'alipay',
-  app_id: '2021001189623257'
+  appId: '2021001189623257'
 };

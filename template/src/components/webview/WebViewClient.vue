@@ -8,11 +8,11 @@
   <view class="web-view-client">
     <view class="web-view-client__loading">{{loading}}</view>
     <!--#ifdef MP-WEIXIN-->
-    <web-view :src="url" v-if="!!url" @load="loadHandler"/>
+    <web-view v-if="!!url" :src="url" @load="loadHandler"/>
     <!--#endif-->
 
     <!--#ifdef MP-ALIPAY-->
-    <web-view :src="url" v-if="!!url" @message="messageHandler"/>
+    <web-view v-if="!!url" :src="url" @message="messageHandler"/>
     <!--#endif-->
   </view>
 </template>
@@ -40,7 +40,7 @@ export default {
   // 在实例初始化之后被调用
   beforeCreate() {
     // 进入直接显示 loading，后续交给 h5 关闭（小程序审核不能空白页过长时间）
-    // uni.showLoading();
+    uni.showLoading();
   },
 
   methods: {
@@ -54,7 +54,7 @@ export default {
     // #ifdef MP-ALIPAY
     messageHandler(e) {
       const { type, value, args } = e.detail.data;
-      console.log('接收到的 message：' + JSON.stringify(e.detail.data));
+      // console.log('接收到的 message：' + JSON.stringify(e.detail.data));
       if (type === 'ready') uni.hideLoading();
 
       // 派发全局消息事件，一般利用 $once 来一次性监听处理

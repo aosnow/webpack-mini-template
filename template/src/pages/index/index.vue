@@ -1,40 +1,35 @@
+<!--------------------------------------------------
+  name: index2.vue
+  author: mudas( mschool.tech )
+  created: 2021/4/19
+---------------------------------------------------->
+
 <template>
   <view class="home-index">
-    <auth-dialog :need-auth="needAuth" :app-id="app_id" @user-info="userInfoHandler"/>
+    <auth-dialog :target-appid="appId" @user-info="userInfoHandler"/>
 
     <view class="home-index__body">
       <text>银盒子支付宝、微信双端小程序模板</text>
-      <!--<image class="home-index__body-head" :src="userInfo.avatar"/>-->
-      <!--<view class="home-index__body-nickname">{{userInfo.nickName}}</view>-->
-      <!--<view class="home-index__body-info">{{userInfo}}</view>-->
+      <image :src="userInfo.avatar" class="home-index__body-head"/>
+      <view class="home-index__body-nickname">{{userInfo.nickName}}</view>
+      <!--<view class="home-index__body-info">{{JSON.stringify(systemInfo)}}</view>-->
+      <!--<view class="home-index__body-info">{{JSON.stringify(configInfo)}}</view>-->
       <image class="home-index__body-copy" src="~@/static/copyright.png"/>
     </view>
   </view>
 </template>
 
 <script>
-import { mapGlobalData, setGlobalData } from '@/utils';
 
+// 参考：https://uniapp.dcloud.io/collocation/frame/lifecycle?id=%E9%A1%B5%E9%9D%A2%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F
 export default {
-
   data() {
-    return {
-      showMobile: false,
-      needAuth: false
-    };
-  },
-
-  computed: {
-    // 提取 globalData 全局数据
-    ...mapGlobalData({
-      app_id: 'app_id',
-      table_info_id: 'table_info_id',
-      userInfo: 'userInfo'
-    })
+    return {};
   },
 
   onLoad(option) {
-    if (this.$var('ready')) {
+    // 首页面需要监听完成初始化业务
+    if (this.$conf('ready')) {
       console.warn('小程序已经启动完成，可开始进行初始业务');
     }
     else {
@@ -52,7 +47,7 @@ export default {
 
     // 用户授权数据获取成功
     userInfoHandler(userInfo) {
-      setGlobalData({ userInfo });
+      this.$setUserinfo(userInfo);
     }
 
   }
@@ -70,33 +65,35 @@ export default {
   &__body {
     font-size: 32rem;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    flex-direction: column;
     justify-content: center;
     padding-top: 200rem;
 
     &-head {
-      width: 100rem;
-      height: 100rem;
-      margin: 20rem;
+      width: 180rem;
+      height: 180rem;
+      margin: 100rem 100rem 20rem;
+      border: 10rem solid $--color-white;
+      border-radius: 180rem;
     }
 
     &-info {
       color: $--color-text-secondary;
-      width: 90%;
       overflow-y: auto;
-      word-break: break-all;
+      width: 90%;
       margin: 20rem;
       padding: 10rem;
+      word-break: break-all;
       border: 1px dotted $--border-color-base;
     }
 
     &-copy {
+      position: absolute;
+      bottom: 50rem;
       width: 300rem;
       height: 40rem;
       background-size: contain;
-      position: absolute;
-      bottom: 50rem;
     }
 
   }

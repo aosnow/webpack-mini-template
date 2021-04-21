@@ -4,8 +4,6 @@
 // created: 2020/11/13 13:59
 // ------------------------------------------------------------------------------
 
-import { setGlobalData } from '@/utils';
-
 export default {
 
   data() {
@@ -16,10 +14,11 @@ export default {
   },
 
   methods: {
-    // 设置地图当前中心点
+    // 设置用户当前地图坐标
     setLocation({ longitude, latitude }) {
       this.longitude = longitude;
       this.latitude = latitude;
+      this.$setUserinfo({ longitude, latitude });
     },
 
     // 获取或者更新当前用户的位置
@@ -38,10 +37,7 @@ export default {
               horizontalAccuracy	水平精度，单位 m
              */
             const position = { longitude: res.longitude, latitude: res.latitude };
-            setGlobalData({ userInfo: { ...position } });
-            this.longitude = position.longitude;
-            this.latitude = position.latitude;
-
+            this.setLocation(position);
             resolve(position);
           },
           fail(reason) {

@@ -4,31 +4,34 @@
 // created: 2020/5/11 14:51
 // ------------------------------------------------------------------------------
 
-import QS from 'query-string';
+import Query from 'query-string';
 
-export function analyzeOption(option = {}) {
-  let query;
+/**
+ * 统一格式化多种场景下的 query 参数信息
+ * @param option
+ * @return {Object}
+ */
+export function formatOption(option = {}) {
+  let result;
+  const { query = {}, ...other } = option;
 
   // 正式环境
   // option.query.q 字符串类型  ?a=1&b=2
-  if (option.query && option.query.q) {
+  if (query.q) {
     const url = decodeURIComponent(option.query.q);
-
-    if (url.indexOf('?') !== -1) {
-      query = QS.parse(url.substr(url.indexOf('?') + 1));
-    }
+    result = url.indexOf('?') !== -1 ? Query.parse(url.substr(url.indexOf('?') + 1)) : {};
   }
 
   // 测试环境
   // object 类型 {a:1,b:2}
   else {
-    query = option.query || option || Object.create(null);
+    result = { ...query, ...other };
   }
 
   // 解码参数值
-  Object.keys(query).forEach(key => {
-    query[key] = unescape(query[key]);
+  Object.keys(result).forEach(key => {
+    result[key] = result[key] ? decodeURIComponent(result[key]) : undefined;
   });
 
-  return query;
+  return result;
 }
