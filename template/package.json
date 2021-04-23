@@ -1,6 +1,6 @@
 {
-  "name": "template-mini",
-  "version": "0.0.1",
+  "name": "{{ name }}",
+  "version": "{{ version }}",
   "description": "{{ description }}",
   "private": true,
   "scripts": {

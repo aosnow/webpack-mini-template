@@ -15,11 +15,9 @@
       <view class="home-index__body-nickname">
         <!--#ifdef MP-ALIPAY-->
         <s-icon color="rgba(50,150,250)" size="60" name="alipay" dot/>
-        <s-icon color="rgba(50,150,250)" size="60" name="alipay"/>
         <!--#endif-->
         <!--#ifdef MP-WEIXIN-->
         <s-icon color="rgba(0,178,106)" size="60" name="wechat" dot/>
-        <s-icon color="rgba(0,178,106)" size="60" name="wechat"/>
         <!--#endif-->
 
         <s-badge dot color="red" content="5">

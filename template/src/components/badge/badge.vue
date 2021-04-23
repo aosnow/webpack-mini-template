@@ -8,7 +8,7 @@
   <view :class="[bem('wrapper')]">
     <!--支付宝环境无法启用 <slot>{{renderContent}}</slot> 的模式-->
     <slot></slot>
-    <view :class="classList" :style="style">{{renderContent}}</view>
+    <view :class="classList" :style="style" v-text="renderContent"/>
   </view>
 </template>
 
