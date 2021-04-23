@@ -20,9 +20,14 @@ import App from '@/App';
 // ----------------------------------------
 import AuthDialog from '@/components/auth/AuthDialog';
 import WebViewClient from '@/components/webview/WebViewClient';
+import SIcon from '@/components/icon/icon';
+import SBadge from '@/components/badge/badge';
 
 Vue.component('auth-dialog', AuthDialog);
 Vue.component('web-view-client', WebViewClient);
+
+Vue.component('s-icon', SIcon);
+Vue.component('s-badge', SBadge);
 
 // ----------------------------------------
 // Vue 全局参数设置

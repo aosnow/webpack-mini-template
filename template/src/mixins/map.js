@@ -18,7 +18,7 @@ export default {
     setLocation({ longitude, latitude }) {
       this.longitude = longitude;
       this.latitude = latitude;
-      this.$setUserinfo({ longitude, latitude });
+      this.setUserinfo({ longitude, latitude });
     },
 
     // 获取或者更新当前用户的位置

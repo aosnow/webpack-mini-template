@@ -7,11 +7,12 @@
 This is a project template for [@vue/cli4](https://cli.vuejs.org/zh/guide/).
 
 ``` bash
-$ npm install -g @vue/cli
+$ npm install -g @vue/cli @vue/cli-init
 $ vue init aosnow/webpack-mini-template <my-project>
 $ cd <my-project>
 $ npm install
-$ npm run serve
+$ npm run dev:weixin
+# OR `$ npm run dev:alipay`
 ```
 
 ### Fork It And Make Your Own

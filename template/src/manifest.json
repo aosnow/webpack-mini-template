@@ -1,5 +1,5 @@
 {
-  "name": "template-mini",
+  "name": "{{name}}",
   "appid": "",
   "description": "",
   "versionName": "1.0.0",
@@ -42,14 +42,14 @@
   "quickapp": { },
   "mp-weixin": {
     "usingComponents": true,
-    "appid": "",
+    "appid": "wx25af39b75249f5c9",
     "setting": {
       "urlCheck": true
     }
   },
   "mp-alipay": {
     "usingComponents": true,
-    "appid": ""
+    "appid": "2021001189623257"
   },
   "mp-baidu": {
     "usingComponents": true

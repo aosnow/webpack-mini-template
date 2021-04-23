@@ -99,9 +99,9 @@ export default {
 
       // 传入 userData 代表更新信息，否则获取用户历史信息
       if (userData) {
-        // #ifdef MP-ALIPAY
-        const { encryptedData, response } = userData;
+        const { encryptedData, response, iv } = userData;
 
+        // #ifdef MP-ALIPAY
         if (response) {
           const detail = JSON.parse(response).response;
           params.userId = this.userId; //2088422280901499
@@ -111,9 +111,7 @@ export default {
           params.encryptedData = encryptedData;
         }
         // #endif
-
         // #ifdef MP-WEIXIN
-        const { encryptedData, iv } = userData;
         params.encryptedUserData = { encryptedData, iv };
         // #endif
       }
@@ -229,7 +227,7 @@ export default {
      * @private
      */
     _loginBySliverBox(params) {
-      return this.$http.auth.get(this.authApi, { ...params })
+      return this.$http.auth.get(this['authApi'], { ...params })
                  .then(({ data }) => {
                    if (data.code === 10000) {
                      return Promise.resolve(data);

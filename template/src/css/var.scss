@@ -17,7 +17,7 @@ $--color-transition-base: color .2s cubic-bezier(.645, .045, .355, 1) !default;
 /// Black & White
 $--color-white: #ffffff !default;
 $--color-black: #000000 !default;
-$--theme-color: #ba2a25 !default;
+$--color-red: #fa0a1e !default;
 
 /// BrandColor
 $--color-primary: #409eff !default;
@@ -57,8 +57,8 @@ $--font-size-base: 28rem !default;
 $--font-size-small: 24rem !default;
 $--font-size-extra-small: 20rem !default; // 仅移动端使用（PC端将强制成最小12px字号）
 
-$--font-weight-primary: 550 !default;
-$--font-weight-secondary: 100 !default;
+$--font-weight-primary: 600 !default;
+$--font-weight-secondary: 400 !default;
 
 $--font-line-height-primary: 1.6 !default;
 $--font-line-height-secondary: 1.25 !default;
@@ -130,6 +130,7 @@ $--border-width-base: 1rem !default;
 $--border-style-base: solid !default;
 $--border-color-hover: $--color-text-placeholder !default;
 $--border-base: $--border-width-base $--border-style-base $--border-color-base !default;
+$--border-radius-large: 100rem !default;
 $--border-radius-base: 8rem !default;
 $--border-radius-small: 4rem !default;
 $--border-radius-circle: 100% !default;

@@ -1,11 +1,8 @@
 // ------------------------------------------------------------------------------
 // name: index
 // author: mudas( mschool.tech )
-// created: 2020.05.05 上午 6:17
+// created: 2021/4/22 17:58
 // ------------------------------------------------------------------------------
 
-export * from '@mudas/util';
-
-export * from './unit';
-export * from './launch';
-export * from './navigator';
+export * from './namespace';
+export * from './style-normal';

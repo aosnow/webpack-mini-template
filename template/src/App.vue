@@ -11,14 +11,14 @@ import { formatOption } from '@/utils';
 
 export default {
   globalData: {
-    ready: false
+    readyState: false
   },
 
   onLaunch(option) {
     // 手机硬件及环境信息
     uni.getSystemInfo({
       success: (res) => {
-        this.$setSystem(res);
+        this.setSystem(res);
       }
     });
   },
@@ -27,9 +27,9 @@ export default {
     const query = formatOption(option);
 
     // 记录环境参数
-    this.setReady(false);
-    this.$setConf({ guid: query.guid, scene: query.scene });
-    this.$setParam(query);
+    this.ready = false;
+    this.setConfig({ guid: query.guid, scene: query.scene });
+    this.setParam(query);
 
     // 1、若是通用码进入，携带 guid，通过接口拿取基本参数
     if (query.guid) {
@@ -75,8 +75,8 @@ export default {
 
     // 应用启动结束
     isReady(value) {
-      this.setReady(true);
-      this.$setConf(value);
+      this.ready = true;
+      this.setConfig(value);
       uni.$emit('ready', value);
     },
 

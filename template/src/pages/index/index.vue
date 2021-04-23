@@ -10,10 +10,23 @@
 
     <view class="home-index__body">
       <text>银盒子支付宝、微信双端小程序模板</text>
+
       <image :src="userInfo.avatar" class="home-index__body-head"/>
-      <view class="home-index__body-nickname">{{userInfo.nickName}}</view>
-      <!--<view class="home-index__body-info">{{JSON.stringify(systemInfo)}}</view>-->
-      <!--<view class="home-index__body-info">{{JSON.stringify(configInfo)}}</view>-->
+      <view class="home-index__body-nickname">
+        <!--#ifdef MP-ALIPAY-->
+        <s-icon color="rgba(50,150,250)" size="60" name="alipay" dot/>
+        <s-icon color="rgba(50,150,250)" size="60" name="alipay"/>
+        <!--#endif-->
+        <!--#ifdef MP-WEIXIN-->
+        <s-icon color="rgba(0,178,106)" size="60" name="wechat" dot/>
+        <s-icon color="rgba(0,178,106)" size="60" name="wechat"/>
+        <!--#endif-->
+
+        <s-badge dot color="red" content="5">
+          <text v-text="userInfo.nickName"/>
+        </s-badge>
+      </view>
+
       <image class="home-index__body-copy" src="~@/static/copyright.png"/>
     </view>
   </view>
@@ -29,7 +42,7 @@ export default {
 
   onLoad(option) {
     // 首页面需要监听完成初始化业务
-    if (this.$conf('ready')) {
+    if (this.ready) {
       console.warn('小程序已经启动完成，可开始进行初始业务');
     }
     else {
@@ -47,7 +60,7 @@ export default {
 
     // 用户授权数据获取成功
     userInfoHandler(userInfo) {
-      this.$setUserinfo(userInfo);
+      this.setUserinfo(userInfo);
     }
 
   }
@@ -78,14 +91,9 @@ export default {
       border-radius: 180rem;
     }
 
-    &-info {
-      color: $--color-text-secondary;
-      overflow-y: auto;
-      width: 90%;
-      margin: 20rem;
-      padding: 10rem;
-      word-break: break-all;
-      border: 1px dotted $--border-color-base;
+    &-nickname {
+      display: flex;
+      align-items: center;
     }
 
     &-copy {
@@ -95,8 +103,6 @@ export default {
       height: 40rem;
       background-size: contain;
     }
-
   }
-
 }
 </style>

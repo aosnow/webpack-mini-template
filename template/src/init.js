@@ -9,6 +9,7 @@ import Vue from 'vue';
 import EasyHttp from '@/http';
 import Filter from '@/filter';
 import mixEnv from '@/mixins/env';
+import mixSlots from '@/mixins/slots';
 import { navigateTo, redirectTo, reLaunch } from '@/utils';
 
 import Config from './config'; // 根据不同的 platform 加载不同的配置
@@ -28,6 +29,7 @@ Vue.use(Filter);
 // ----------------------------------------
 // Vue 全局混合
 // ----------------------------------------
+Vue.mixin(mixSlots);
 Vue.mixin(mixEnv);
 
 // ----------------------------------------

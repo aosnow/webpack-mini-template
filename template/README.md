@@ -37,4 +37,9 @@ quickapp-vue|快应用
     3. 进行环境判断时，dev 模式 process.env.NODE_ENV 的值为 development，build 模式 process.env.NODE_ENV 的值为 production。
 
 ### vue 与 uni-app 小程序的差异
-[vue 与 uni-app 小程序的差异详细介绍](https://uniapp.dcloud.io/use/)
+uni-app 在发布到H5时支持所有vue的语法；发布到App和小程序时，由于平台限制，无法实现全部vue语法，但 uni-app 仍是是对vue语法支持度最高的跨端框架。
+
+相比Web平台， Vue.js 在 uni-app 中使用差异主要集中在两个方面：
+- 新增：uni-app 除了支持Vue实例的生命周期，还支持 [应用生命周期](https://uniapp.dcloud.io/collocation/frame/lifecycle?id=%e5%ba%94%e7%94%a8%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f) 以及[页面生命周期](https://uniapp.dcloud.io/collocation/frame/lifecycle?id=%e9%a1%b5%e9%9d%a2%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f)
+- 受限：相比web平台，在小程序和App端部分功能受限，[具体见](https://uniapp.dcloud.io/vue-api)
+- uni-app 完整支持 Vue [模板语法](https://uniapp.dcloud.io/vue-basics?id=%e6%a8%a1%e6%9d%bf%e8%af%ad%e6%b3%95)

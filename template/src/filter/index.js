@@ -7,7 +7,7 @@
 import { currency, dateformat, times, distance } from '@/utils';
 
 // ----------------------------------------
-// Vue 全局过滤器
+// Vue 全局过滤器（uni-app 已支持全局过滤器注册 Vue.filter）
 // ----------------------------------------
 export default function(Vue) {
   // 常用过滤器
