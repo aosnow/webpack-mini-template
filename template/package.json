@@ -57,18 +57,20 @@
     "@dcloudio/uni-quickapp-native": "^2.0.0-31920210422002",
     "@dcloudio/uni-quickapp-webview": "^2.0.0-31920210422002",
     "@dcloudio/uni-stat": "^2.0.0-31920210422002",
+    "@mudas/env": "^0.0.5",
     "@mudas/store": "0.0.7",
-    "@mudas/util": "0.0.10",
+    "@mudas/util": "0.0.14",
     "@vant/icons": "^1.5.3",
     "@vue/shared": "^3.0.11",
     "core-js": "^3.10.1",
     "currency.js": "^2.0.3",
     "dayjs": "^1.10.4",
     "flyio": "^0.6.2",
+    "hash.js": "^1.1.7",
     "qrcode": "^1.4.4",
-    "query-string": "^6.13.1",
+    "query-string": "^7.0.1",
     "regenerator-runtime": "^0.12.1",
-    "vue": "^2.6.12",
+    "vue": "^2.6.14",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -95,7 +97,7 @@
     "postcss-comment": "^2.0.0",
     "postcss-relaxed-unit": "^1.1.1",
     "sass-loader": "^10.1.1",
-    "vue-template-compiler": "^2.6.12"
+    "vue-template-compiler": "^2.6.14"
   },
   "browserslist": [
     "Android >= 4",
