@@ -15,11 +15,10 @@
 <script>
 import { isDefine, isNumeric } from '@/utils';
 import { namespace, normalClasses, normalStyle } from '../style';
-
-const bem = namespace('badge');
+import mixBEM from '../mixins/bem';
 
 export default {
-  name: bem(),
+  mixins: [mixBEM(namespace('badge'))],
 
   // options: {
   //   virtualHost: true
@@ -42,10 +41,7 @@ export default {
 
     classList() {
       return normalClasses([
-        bem({
-          dot: this.dot && !this.hasContent,
-          fixed: this.slots.default || this.fixed
-        })
+        this.bem({ dot: this.dot && !this.hasContent, fixed: this.slots.default || this.fixed })
       ]);
     },
 
@@ -64,10 +60,6 @@ export default {
 
       return '';
     }
-  },
-
-  methods: {
-    bem
   }
 };
 </script>

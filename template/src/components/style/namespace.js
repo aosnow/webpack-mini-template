@@ -86,7 +86,7 @@ export function createBEM(name) {
  *
  * // 仅父元素本身类名
  * bem()
- * // => 's-root'
+ * // => 's-grid'
  *
  * // 设置子元素类名
  * bem('child')

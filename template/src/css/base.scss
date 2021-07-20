@@ -1,13 +1,10 @@
 // ------------------------------------------------------------------------------
-// name: wechat.conf
+// name: index
 // author: mudas( mschool.tech )
-// created: 2020.05.04 下午 23:28
+// created: 2020/11/24
 // ------------------------------------------------------------------------------
 
-// 微信小程序配置
-export default {
-  source: 2,
-  channel: 'wechat',
-  appId: 'wx1427a54d875b079b' // 'wx25af39b75249f5c9'
-};
-
+@import './var';
+@import './ellipsis';
+@import './clearfix';
+@import './hairline';

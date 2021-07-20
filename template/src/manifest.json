@@ -42,14 +42,31 @@
   "quickapp": { },
   "mp-weixin": {
     "usingComponents": true,
-    "appid": "wx25af39b75249f5c9",
+    "optimization": {
+      "subPackages": true
+    },
+    "appid": "wx1427a54d875b079b",
     "setting": {
-      "urlCheck": true
+      "urlCheck": false,
+      "es6": true
+    },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "位置信息将用于路线规划等场景"
+      }
     }
   },
   "mp-alipay": {
     "usingComponents": true,
-    "appid": "2021001189623257"
+    "appid": "2021001189623257",
+    "optimization": {
+      "subPackages": true
+    },
+    "permission": {
+      "scope.userLocation": {
+        "desc": "位置信息将用于路线规划等场景"
+      }
+    }
   },
   "mp-baidu": {
     "usingComponents": true
